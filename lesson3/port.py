@@ -15,6 +15,6 @@ with open('../data/portfolio.csv', 'r') as f:
         parts[2] = int(parts[2])
         parts[3] = float(parts[3])
         print(parts)
-        total += parts[2]+parts[3]
+        total += parts[2] * parts[3]
 
 print('Total cost: %.2f' % total)
