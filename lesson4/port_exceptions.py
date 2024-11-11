@@ -3,10 +3,15 @@
 import csv
 import glob
 
-def portfolio_cost(filename):
+# using the *, as an argument enforces keyword writing style when calling function
+def portfolio_cost(filename, *, errors='warn'):
     '''
     Computes total shares*price for a CSV file with name, date, shares, price data
     '''
+
+    if errors not in { 'warn', 'silent', 'raise' }:
+        raise ValueError("errors must be one of 'warn', 'silent', 'raise'")
+    
     total = 0.0
 
     with open(filename, 'r') as f:
@@ -18,8 +23,14 @@ def portfolio_cost(filename):
                 row[2] = int(row[2])
                 row[3] = float(row[3])
             except ValueError as err:
-                print('Row:', rowno, 'Bad row:', row)
-                print('Row:', rowno, 'Reason:',err)
+                if errors == 'warn':
+                    print('Row:', rowno, 'Bad row:', row)
+                    print('Row:', rowno, 'Reason:',err)
+                elif errors == "raise":
+                    raise
+                else:
+                    pass
+
                 continue
         
         total += row[2] * row[3]
@@ -34,5 +45,5 @@ def portfolio_cost(filename):
 #     total = portfolio_cost(file)
 #     print('Total cost: %.2f' % total)
 
-total = portfolio_cost('../data/missing.csv')
+total = portfolio_cost('../data/missing.csv', errors='silent')
 print(total)
