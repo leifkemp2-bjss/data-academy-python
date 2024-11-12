@@ -5,6 +5,31 @@ class Holding():
         self.shares = shares
         self.price = price
 
+    # Getters and setters
+    @property
+    def price(self):
+        return self._price
+    
+    @price.setter
+    def price(self, newprice):
+        if not isinstance(newprice, float):
+            raise TypeError("Expected float")
+        if newprice < 0:
+            raise ValueError("Must >= 0")
+        self._price = newprice
+
+    @property
+    def shares(self):
+        return self._shares
+    
+    @shares.setter
+    def shares(self, newshares):
+        if not isinstance(newshares, int):
+            raise TypeError("Expected int")
+        self._shares = newshares
+
+    # Declaring this as a property, meaning it can be called as h.cost like a normal attribute
+    @property
     def cost(self):
         return self.shares * self.price
     
@@ -23,6 +48,7 @@ class Portfolio(object):
     def __init__(self):
         self.holdings = []
 
+    # Allows Portfolio to pick up methods
     def __getattr__(self, name):
         return getattr(self.holdings, name)
 
@@ -53,11 +79,27 @@ class Portfolio(object):
     def __iter__(self):
         return self.holdings.__iter__()
     
+# Creates a read-only wrapper to ensure that attributes in this wrapper cannot be set
+class ReadOnly():
+    def __init__(self, obj):
+        self._obj = obj
+
+    def __getattr__(self, name):
+        return getattr(self._obj, name)
+    
+    def __setattr__(self, name, value):
+        if name == '_obj':
+            super().__setattr__(name, value)
+        else:
+            raise AttributeError("Read only")
+    
 portfolio = Portfolio.from_csv("../data/portfolio.csv")
 print(portfolio)
 
-print(len(portfolio))
-print(portfolio[2])
-print(portfolio.__getitem__(2))
-print(portfolio["MSFT"])
-# table.print_table(portfolio, ['name', 'shares'])
+h = Holding("Foo", "2020-10-10", 100, 10.0)
+
+portfolio[1].price = 32.0
+
+ro = ReadOnly(h)
+# Should throw an AttributeError
+ro.shares = 50
