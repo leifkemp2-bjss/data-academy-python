@@ -11,11 +11,11 @@ class Holding():
     def sell(self, nshares):
         self.shares -= nshares
 
-    def __repr__(self):
+    def __str__(self):
         return "{:<5s} {:<12s} {:<6d} {:<6.2f}\n".format(self.name, self.date, self.shares, self.price)
 
-    def __str__(self):
-        return "{} shares of {} at ${:0.2f}\n".format(self.shares, self.name, self.price)
+    def __repr__(self):
+        return "{:<5s} {:<12s} {:<6d} {:<6.2f}\n".format(self.name, self.date, self.shares, self.price)
 
 import csv
 
@@ -34,5 +34,9 @@ portfolio = read_portfolio("../data/portfolio.csv")
 print(portfolio)
 
 import table
+import advanced_inherit
 
-table.print_table(portfolio, ['name', 'shares'])
+# formatter = table.TextTableFormatter(width=15)
+formatter = advanced_inherit.Formatter()
+
+table.print_table(portfolio, ['name', 'shares', 'price'], formatter)
